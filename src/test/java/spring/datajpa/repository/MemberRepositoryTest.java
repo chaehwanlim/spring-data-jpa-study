@@ -188,4 +188,18 @@ class MemberRepositoryTest {
         assertThat(page.hasNext()).isTrue();
     }
 
+    @Test
+    public void bulkUpdate() {
+        // given
+        for (int i = 1; i <= 5; i++) {
+            memberRepository.save(Member.builder().username("member" + i).age(7 * i).build());
+        }
+
+        //when
+        int resultCount = memberRepository.bulkAgeIncrementMtAge(20);
+
+        //then
+        assertThat(resultCount).isEqualTo(3);
+    }
+
 }
