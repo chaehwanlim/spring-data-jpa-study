@@ -3,6 +3,9 @@ package spring.datajpa.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import spring.datajpa.entity.Member;
 import spring.datajpa.entity.Team;
@@ -158,6 +161,31 @@ class MemberRepositoryTest {
         List<Member> aaa = memberRepository.findListByUsername("AAA");
         Member aaa1 = memberRepository.findMemberByUsername("AAA");
         Optional<Member> aaa2 = memberRepository.findOptionalMemberByUsername("AAA");
+    }
+
+    @Test
+    public void pageTest() {
+        // given
+        for (int i = 1; i <= 5; i++) {
+            memberRepository.save(Member.builder().username("member" + i).build());
+        }
+
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        // when
+        // 반환 타입이 Page이므로 total count가 필요하므로 count 쿼리가 추가로 발생함
+        Page<Member> page = memberRepository.findByAge(10, pageRequest);
+
+        // then
+        List<Member> content = page.getContent();
+        long totalElements = page.getTotalElements();
+
+        assertThat(content.size()).isEqualTo(3);
+        assertThat(totalElements).isEqualTo(5);
+        assertThat(page.getNumber()).isZero();
+        assertThat(page.getTotalPages()).isEqualTo(2);
+        assertThat(page.isFirst()).isTrue();
+        assertThat(page.hasNext()).isTrue();
     }
 
 }
