@@ -8,6 +8,7 @@ import spring.datajpa.entity.Member;
 import spring.datajpa.entity.Team;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -144,6 +145,19 @@ class MemberRepositoryTest {
         memberRepository.findByNames(List.of("AAA", "BBB")).forEach(username -> {
             System.out.println("username = " + username);
         });
+    }
+
+    @Test
+    public void returnTypeTest() {
+        Member m1 = Member.builder().username("AAA").age(10).build();
+        Member m2 = Member.builder().username("AAA").age(20).build();
+
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> aaa = memberRepository.findListByUsername("AAA");
+        Member aaa1 = memberRepository.findMemberByUsername("AAA");
+        Optional<Member> aaa2 = memberRepository.findOptionalMemberByUsername("AAA");
     }
 
 }
