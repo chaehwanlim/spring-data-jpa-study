@@ -133,4 +133,17 @@ class MemberRepositoryTest {
         });
     }
 
+    @Test
+    public void findByNames() {
+        Member m1 = Member.builder().username("AAA").age(10).build();
+        Member m2 = Member.builder().username("BBB").age(20).build();
+
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        memberRepository.findByNames(List.of("AAA", "BBB")).forEach(username -> {
+            System.out.println("username = " + username);
+        });
+    }
+
 }
