@@ -26,6 +26,7 @@ class MemberRepositoryTest {
     @Autowired
     TeamRepository teamRepository;
 
+    @Autowired
     EntityManager em;
 
     @Test
@@ -230,6 +231,21 @@ class MemberRepositoryTest {
             System.out.println("member.teamClass = " + member.getTeam().getClass());
             System.out.println("member.teamName = " + member.getTeam().getName());
         });
+    }
+
+    @Test
+    public void queryHint() {
+        //given
+        Member memberA = Member.builder().username("memberA").age(10).build();
+        memberRepository.save(memberA);
+        em.flush();
+        em.clear();
+
+        //when
+//        Member foundMember = memberRepository.findById(memberA.getId()).get();
+        Member foundMember = memberRepository.findReadOnlyByUsername("memberA");
+        foundMember.updateUsername("memberB");
+
     }
 
 }
