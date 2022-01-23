@@ -20,5 +20,5 @@ public class DataJpaApplication {
 		// 실무에서는 Session에서 사용자 ID를 가져오면 될 듯
 		return () -> Optional.of(UUID.randomUUID().toString());
 	}
-	
+
 }
