@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.datajpa.entity.Member;
 import spring.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,8 @@ class MemberRepositoryTest {
 
     @Autowired
     TeamRepository teamRepository;
+
+    EntityManager em;
 
     @Test
     void test1() {
@@ -200,6 +203,33 @@ class MemberRepositoryTest {
 
         //then
         assertThat(resultCount).isEqualTo(3);
+    }
+
+    @Test
+    public void findMemberLazy() {
+        //given
+        Team teamA = Team.builder().name("teamA").build();
+        Team teamB = Team.builder().name("teamB").build();
+
+        Member m1 = Member.builder().username("m1").team(teamA).age(24).build();
+        Member m2 = Member.builder().username("m2").team(teamB).age(25).build();
+
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        em.flush();
+        em.clear();
+
+        //when
+//        memberRepository.findAll().forEach(member -> {
+        memberRepository.findMemberFetchJoin().forEach(member -> {
+            System.out.println("member = " + member.getUsername());
+            System.out.println("member.teamClass = " + member.getTeam().getClass());
+            System.out.println("member.teamName = " + member.getTeam().getName());
+        });
     }
 
 }

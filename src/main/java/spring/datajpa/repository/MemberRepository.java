@@ -45,4 +45,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
     int bulkAgeIncrementMtAge(@Param("age") int age);
 
+    @Query("select m from Member m left join fetch m.team")
+    List<Member> findMemberFetchJoin();
+
 }
