@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import spring.datajpa.dto.MemberDto;
 import spring.datajpa.entity.Member;
 
+import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
@@ -60,5 +61,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
     Member findReadOnlyByUsername(String username);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Member> findLockByUsername(String username);
 
 }

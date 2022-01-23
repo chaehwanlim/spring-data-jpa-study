@@ -11,6 +11,7 @@ import spring.datajpa.entity.Member;
 import spring.datajpa.entity.Team;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ class MemberRepositoryTest {
     @Autowired
     TeamRepository teamRepository;
 
-    @Autowired
+    @PersistenceContext
     EntityManager em;
 
     @Test
@@ -245,7 +246,18 @@ class MemberRepositoryTest {
 //        Member foundMember = memberRepository.findById(memberA.getId()).get();
         Member foundMember = memberRepository.findReadOnlyByUsername("memberA");
         foundMember.updateUsername("memberB");
+    }
 
+    @Test
+    public void lock() {
+        //given
+        Member memberA = Member.builder().username("memberA").age(10).build();
+        memberRepository.save(memberA);
+        em.flush();
+        em.clear();
+
+        //when
+        List<Member> result = memberRepository.findLockByUsername("memberA");
     }
 
 }
