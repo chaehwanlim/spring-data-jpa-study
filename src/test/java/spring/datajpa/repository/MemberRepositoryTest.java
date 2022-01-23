@@ -225,7 +225,7 @@ class MemberRepositoryTest {
 
         //when
 //        memberRepository.findAll().forEach(member -> {
-        memberRepository.findMemberFetchJoin().forEach(member -> {
+        memberRepository.findAll().forEach(member -> {
             System.out.println("member = " + member.getUsername());
             System.out.println("member.teamClass = " + member.getTeam().getClass());
             System.out.println("member.teamName = " + member.getTeam().getName());
