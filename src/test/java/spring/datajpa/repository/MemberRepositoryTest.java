@@ -324,4 +324,29 @@ class MemberRepositoryTest {
         });
     }
 
+    @Test
+    public void nativeQuery() {
+        // given
+        Team teamA = Team.builder().name("teamA").build();
+        em.persist(teamA);
+
+        Member m1 = Member.builder().username("m1").age(0).team(teamA).build();
+        Member m2 = Member.builder().username("m2").age(0).team(teamA).build();
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Member result = memberRepository.findByNativeQuery("m1");
+        List<MemberProjection> content = memberRepository.findByNativeProjection(PageRequest.of(0, 10)).getContent();
+
+        System.out.println("result = " + result);
+        content.forEach(c -> {
+            System.out.println("username = " + c.getUsername());
+            System.out.println("teamName = " + c.getTeamName());
+        });
+    }
+
 }
