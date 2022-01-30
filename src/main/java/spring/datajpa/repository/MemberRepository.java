@@ -28,7 +28,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     @Query("select new spring.datajpa.dto.MemberDto(m.id, m.username, t.name) from Member m join m.team t")
     List<MemberDto> findMemberDto();
 
-    @Query("select m from Member m where m.username in :names");
+    @Query("select m from Member m where m.username in :names")
     List<Member> findByNames(@Param("names") List<String> names);
 
     List<Member> findListByUsername(String username);   //컬렉션
@@ -65,4 +65,9 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Member> findLockByUsername(String username);
 
+    List<UsernameOnly> findProjectionByUsername(String username);
+
+    List<UsernameOnlyDto> findProjectionDtoByUsername(String username);
+
+    <T> List<T> findGenericByUsername(String username, Class<T> type);
 }
