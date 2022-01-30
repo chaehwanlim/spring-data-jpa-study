@@ -3,9 +3,7 @@ package spring.datajpa.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import spring.datajpa.entity.Member;
 import spring.datajpa.entity.Team;
@@ -263,6 +261,34 @@ class MemberRepositoryTest {
     @Test
     public void callCustom() {
         List<Member> members = memberRepository.findMemberCustom();
+    }
+
+    @Test
+    public void queryByExample() {
+        // given
+        Team teamA = Team.builder().name("teamA").build();
+        em.persist(teamA);
+
+        Member m1 = Member.builder().username("m1").age(0).team(teamA).build();
+        Member m2 = Member.builder().username("m2").age(0).team(teamA).build();
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        // Probe
+        Member member = Member.builder().username("m1").build();
+        Team team = Team.builder().name("teamA").build();
+        member.changeTeam(team);
+
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("age");
+        Example<Member> example = Example.of(member, matcher);
+
+        List<Member> result = memberRepository.findAll(example);
+
+        assertThat(result.get(0).getUsername()).isEqualTo("m1");
     }
 
 }
